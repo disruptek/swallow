@@ -1,5 +1,5 @@
-lazypipe = require "lazypipe"
-p = (require "gulp-load-plugins")()
+lazypipe = require 'lazypipe'
+p = (require 'gulp-load-plugins')()
 
 if not p.using
     console.log 'error: missing gulp-using'
