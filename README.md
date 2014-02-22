@@ -1,0 +1,4 @@
+swallow
+=======
+
+patterns in gulp
