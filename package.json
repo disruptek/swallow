@@ -7,7 +7,5 @@
     "gulp-load-plugins": "0.3.x",
     "gulp-using": "0.0.x",
     "lazypipe": "0.1.x",
-  },
-  "devDependencies": {
   }
 }
