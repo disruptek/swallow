@@ -15,7 +15,7 @@ if p.jshint
         catch error
             reporter = 'default'
         lazypipe()
-            .pipe(p.using)
+            .pipe(p.using, {prefix: 'javascript'})
             .pipe(p.jshint)
             .pipe(p.jshint.reporter, reporter)
 
@@ -24,7 +24,7 @@ if p.iced or p.coffee
     exports.coffeescript = (options) ->
         options ?= {bare: true}
         lazypipe()
-            .pipe(p.using)
+            .pipe(p.using, {prefix: 'coffeescript'})
             .pipe(p.iced or p.coffee, options)
 
 if p.iced
@@ -32,7 +32,7 @@ if p.iced
     exports.icedcoffeescript = (options) ->
         options ?= {bare: true}
         lazypipe()
-            .pipe(p.using)
+            .pipe(p.using, {prefix: 'icedcoffeescript'})
             .pipe(p.iced, options)
 
 if p.iced and p.coffee
@@ -42,7 +42,7 @@ if p.haml
     pipechain.push ['haml', '.+\\.haml']
     exports.haml = (options) ->
         lazypipe()
-            .pipe(p.using)
+            .pipe(p.using, {prefix: 'haml'})
             .pipe(p.haml)
 
 if p.emblem
@@ -53,14 +53,14 @@ if p.emblem
             outputType: 'node'
             wrapped: true
         lazypipe()
-            .pipe(p.using)
+            .pipe(p.using, {prefix: 'emblem'})
             .pipe(p.emblem, options)
 
 if p.dust
     pipechain.push ['dust', '.+\\.dust']
     exports.dust = (options) ->
         lazypipe()
-            .pipe(p.using)
+            .pipe(p.using, {prefix: 'dust'})
             .pipe(p.dust, options)
 
 if p.handlebars
@@ -70,12 +70,13 @@ if p.handlebars
             outputType: 'node'
             wrapped: true
         lazypipe()
-            .pipe(p.using)
+            .pipe(p.using, {prefix: 'handlebars'})
             .pipe(p.handlebars, options)
 
 if p.uglify and p.size
     exports.uglify = (options) ->
         lazypipe()
+            .pipe(p.using, {prefix: 'uglify'})
             .pipe(p.size, {showFiles: true})
             .pipe(p.uglify, options)
             .pipe(p.size, {showFiles: true})
@@ -85,6 +86,7 @@ else if p.uglify or p.size
 if p.gzip and p.size
     exports.gzip = (options) ->
         lazypipe()
+            .pipe(p.using, {prefix: 'gzip'})
             .pipe(p.gzip, options)
             .pipe(p.size, {showFiles: true})
 else if p.gzip or p.size
