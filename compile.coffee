@@ -19,20 +19,20 @@ if p.jshint
             .pipe(p.jshint)
             .pipe(p.jshint.reporter, reporter)
 
-if p.iced or p.coffee
+if p.coffee or p.iced
     pipechain.push ['coffeescript', '.+\\.coffee']
     exports.coffeescript = (options) ->
         options ?= {bare: true}
         lazypipe()
             .pipe(p.using, {prefix: 'coffeescript'})
-            .pipe(p.iced or p.coffee, options)
+            .pipe(p.coffee or p.iced, options)
 
 if p.iced
     pipechain.push ['icedcoffeescript', '.+\\.iced']
     exports.icedcoffeescript = (options) ->
-        options ?= {bare: true}
+        options ?= {bare: true, runtime: 'inline'}
         lazypipe()
-            .pipe(p.using, {prefix: 'icedcoffeescript'})
+            .pipe(p.using, {prefix: 'iced'})
             .pipe(p.iced, options)
 
 if p.iced and p.coffee
