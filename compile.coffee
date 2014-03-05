@@ -10,7 +10,7 @@ pipechain = []
 if mayuse['gulp-jshint']
     # get around the issue with the reporter
     p['jshint'] = require 'gulp-jshint'
-    pipechain.push ['javascript', '.+\\.js']
+    pipechain.push ['javascript', '\\.js$']
     exports.javascript = (options) ->
         try
             reporter = options?.reporter ? null
@@ -23,9 +23,35 @@ if mayuse['gulp-jshint']
             .pipe(p.jshint)
             .pipe(p.jshint.reporter, reporter)
 
+if mayuse['gulp-sass']
+    pipechain.push ['sass', '\\.scss$']
+    exports.sass = (options) ->
+#        options ?= {sourcemap: true}
+        options ?= {}
+        pipe = lazypipe()
+            .pipe(p.using, {prefix: 'sass'})
+            .pipe(p.sass, options)
+        if mayuse['gulp-csso'] and mayuse['gulp-size']
+            pipe
+                .pipe(p.using, {prefix: 'csso'})
+                .pipe(p.size)
+                .pipe(p.csso, {})
+                .pipe(p.size)
+
+if mayuse['gulp-csso'] and mayuse['gulp-size']
+    pipechain.push ['csso', '\\.css$']
+    exports.csso = (options) ->
+        options ?= false
+        lazypipe()
+            .pipe(p.using, {prefix: 'csso'})
+            .pipe(p.csso, options)
+            .pipe(p.size)
+else if mayuse['gulp-csso'] and not mayuse['gulp-size']
+    console.log 'warning: need gulp-size to csso'
+
 if mayuse['gulp-coffee'] or mayuse['gulp-iced']
     coffee = if mayuse['gulp-coffee'] then p.coffee else p.iced
-    pipechain.push ['coffeescript', '.+\\.coffee']
+    pipechain.push ['coffeescript', '\\.coffee$']
     exports.coffeescript = (options) ->
         options ?= {bare: true}
         lazypipe()
@@ -33,7 +59,7 @@ if mayuse['gulp-coffee'] or mayuse['gulp-iced']
             .pipe(coffee, options)
 
 if mayuse['gulp-iced']
-    pipechain.push ['icedcoffeescript', '.+\\.iced']
+    pipechain.push ['icedcoffeescript', '\\.iced$']
     exports.icedcoffeescript = (options) ->
         options ?= {bare: true, runtime: 'inline'}
         lazypipe()
@@ -44,14 +70,14 @@ if mayuse['gulp-coffee'] and mayuse['gulp-iced']
     console.log 'warning: both gulp-coffee and gulp-iced imported'
 
 if mayuse['gulp-haml']
-    pipechain.push ['haml', '.+\\.haml']
+    pipechain.push ['haml', '\\.haml$']
     exports.haml = (options) ->
         lazypipe()
             .pipe(p.using, {prefix: 'haml'})
             .pipe(p.haml)
 
 if mayuse['gulp-emblem']
-    pipechain.push ['emblem', '.+\\.emblem']
+    pipechain.push ['emblem', '\\.emblem$']
     exports.emblem = (options) ->
         options ?=
             root: 'app/'
@@ -62,14 +88,14 @@ if mayuse['gulp-emblem']
             .pipe(p.emblem, options)
 
 if mayuse['gulp-dust']
-    pipechain.push ['dust', '.+\\.dust']
+    pipechain.push ['dust', '\\.dust$']
     exports.dust = (options) ->
         lazypipe()
             .pipe(p.using, {prefix: 'dust'})
             .pipe(p.dust, options)
 
 if mayuse['gulp-handlebars']
-    pipechain.push ['handlebars', '.+\\.hbs']
+    pipechain.push ['handlebars', '\\.hbs$']
     exports.handlebars = (options) ->
         options ?=
             outputType: 'node'
