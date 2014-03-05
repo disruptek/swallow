@@ -23,29 +23,36 @@ if mayuse['gulp-jshint']
             .pipe(p.jshint)
             .pipe(p.jshint.reporter, reporter)
 
-if mayuse['gulp-sass']
+if mayuse['gulp-ruby-sass'] or mayuse['gulp-sass']
+    sass = if mayuse['gulp-ruby-sass'] then p.rubySass else p.sass
     pipechain.push ['sass', '\\.scss$']
     exports.sass = (options) ->
 #        options ?= {sourcemap: true}
         options ?= {}
         pipe = lazypipe()
             .pipe(p.using, {prefix: 'sass'})
-            .pipe(p.sass, options)
-        if mayuse['gulp-csso'] and mayuse['gulp-size']
-            pipe
-                .pipe(p.using, {prefix: 'csso'})
-                .pipe(p.size)
-                .pipe(p.csso, {})
-                .pipe(p.size)
+            .pipe(sass, options)
+
+if mayuse['gulp-myth'] and mayuse['gulp-size']
+    pipechain.push ['myth', '\\.css$']
+    exports.myth = (options) ->
+        pipe = lazypipe()
+            .pipe(p.size, {showFiles: true})
+            .pipe(p.using, {prefix: 'myth'})
+            .pipe(p.myth)
+            .pipe(p.size, {showFiles: true})
+else if mayuse['gulp-myth'] and not mayuse['gulp-size']
+    console.log 'warning: need gulp-size to myth'
 
 if mayuse['gulp-csso'] and mayuse['gulp-size']
     pipechain.push ['csso', '\\.css$']
     exports.csso = (options) ->
         options ?= false
         lazypipe()
+            .pipe(p.size, {showFiles: true})
             .pipe(p.using, {prefix: 'csso'})
             .pipe(p.csso, options)
-            .pipe(p.size)
+            .pipe(p.size, {showFiles: true})
 else if mayuse['gulp-csso'] and not mayuse['gulp-size']
     console.log 'warning: need gulp-size to csso'
 
@@ -107,8 +114,8 @@ if mayuse['gulp-handlebars']
 if mayuse['gulp-uglify'] and mayuse['gulp-size']
     exports.uglify = (options) ->
         lazypipe()
-            .pipe(p.using, {prefix: 'uglify'})
             .pipe(p.size, {showFiles: true})
+            .pipe(p.using, {prefix: 'uglify'})
             .pipe(p.uglify, options)
             .pipe(p.size, {showFiles: true})
 else if mayuse['gulp-uglify'] and not mayuse['gulp-size']
@@ -117,6 +124,7 @@ else if mayuse['gulp-uglify'] and not mayuse['gulp-size']
 if mayuse['gulp-gzip'] and mayuse['gulp-size']
     exports.gzip = (options) ->
         lazypipe()
+            .pipe(p.size, {showFiles: true})
             .pipe(p.using, {prefix: 'gzip'})
             .pipe(p.gzip, options)
             .pipe(p.size, {showFiles: true})
@@ -125,7 +133,7 @@ else if mayuse['gulp-gzip'] and not mayuse['gulp-size']
 
 # create a pipe with options, attach an error handler
 exports.linked_pipe = (pipefun, error, options) ->
-    result = pipefun(options)()
+    result = pipefun(options, error)()
     result.on 'error', error
 
 if mayuse['gulp-if']
