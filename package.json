@@ -1,11 +1,12 @@
 {
   "name": "swallow",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "private": true,
   "dependencies": {
     "gulp": "3.x.x",
     "gulp-load-plugins": "0.x.x",
     "gulp-using": "0.x.x",
+    "gulp-size": "0.x.x",
     "lazypipe": "0.x.x"
   }
 }

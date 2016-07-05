@@ -33,6 +33,13 @@ if mayuse['gulp-ruby-sass'] or mayuse['gulp-sass']
             .pipe(p.using, {prefix: 'sass'})
             .pipe(sass, options)
 
+if mayuse['gulp-stylus']
+    pipechain.push ['stylus', '\\.styl$']
+    exports.stylus = (options) ->
+        pipe = lazypipe()
+            .pipe(p.using, {prefix: 'stylus'})
+            .pipe(p.stylus, options)
+
 if mayuse['gulp-myth'] and mayuse['gulp-size']
     pipechain.push ['myth', '\\.css$']
     exports.myth = (options) ->
